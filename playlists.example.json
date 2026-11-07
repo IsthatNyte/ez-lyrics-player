@@ -1,0 +1,13 @@
+[
+  {
+    "id": "my_playlist",
+    "name": "Favorites",
+    "tracks": [
+      {
+        "name": "Sample Song",
+        "artists": ["Sample Artist"],
+        "album": "Sample Album"
+      }
+    ]
+  }
+]

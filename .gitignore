@@ -9,7 +9,10 @@ build/
 dist/
 *.exe
 
-# Cache and local state
+# Cache, logs, and private user data
 cache_store.json
+wit_u_playlist.json
+library_cache.json
+playlists.json
 .ez_lyrics*
 *.log

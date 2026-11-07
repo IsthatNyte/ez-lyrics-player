@@ -1,68 +1,62 @@
 # EZ Lyrics Player
 
-> Standalone lightweight music player and real-time synchronized lyrics HUD with LiquidGL UI.
+> A lightweight, fast lyrics player based on Python.
 
-EZ Lyrics Player is an ultra-lightweight desktop music player and synchronized lyrics display designed to replace heavy desktop clients. It delivers crystal-clear audio playback, millisecond-accurate time-synced lyrics, and rich visual customization while consuming only 40–50 MB of RAM.
+EZ Lyrics Player is a fast, standalone desktop music player and real-time synchronized lyrics display. It streams songs and time-synced lyrics with minimal CPU and RAM usage, running completely independent of Spotify.
+
+## Showcase
+
+| Vertical Player | Real-Time Synced Lyrics | Mini HUD Mode |
+|---|---|---|
+| ![Player View](assets/preview_player.jpg) | ![Lyrics View](assets/preview_lyrics.jpg) | ![Mini Mode](assets/preview_mini.png) |
+
+### Video Previews
+- [Full Playback & Lyrics Demo](https://files.catbox.moe/cp2pjl.mp4)
+- [Search, Playlists & Controls Demo](https://files.catbox.moe/28o6mf.mp4)
 
 ---
 
-## Key Features
+## Features
 
-- **Zero Spotify Dependency**: Stream music and view lyrics completely standalone with Spotify desktop closed.
-- **Instant Playlist & Search Playback**: Play your personal playlists from track 1 with a single click, or search any song and stream it directly.
-- **Smart Song Radio & Recommendations**: Skip any searched song to automatically discover and queue similar recommended tracks by related artists.
-- **Shuffle & Loop Controls**: Toggle true shuffle queue navigation and single-track repeat directly from player controls.
-- **Real-Time Synced Lyrics**: Frame-accurate scrolling lyrics with multi-provider fallback (LRCLIB, NetEase, Musixmatch).
-- **Phonetic & Romanization Sub-Lines**: Live phonetic translation sub-lines for international tracks.
-- **LiquidGL Frosted Glass UI**: Dynamic album-art-tinted glassmorphism HUD with drag-to-reposition and resize controls.
-- **Sub-50ms Cold Launch**: Multi-tier persistent cache store for instantaneous stream and cover retrieval.
-- **Ghost Click-Through Mode**: Overlay lyrics seamlessly above games, code editors, or browser windows (`Ctrl+Shift+L`).
-- **Discord Rich Presence**: Native IPC integration broadcasting your live playback status.
+- **Standalone Playback**: Stream songs directly without opening or needing Spotify.
+- **Synced Lyrics**: Millisecond-accurate line-by-line scrolling lyrics.
+- **Smart Song Radio**: Skipping a searched song automatically plays similar recommended tracks.
+- **Playlist Support**: Click the play badge to start a playlist from track one, or click the row to browse songs.
+- **Smooth, reactive UI**: Clean album-art color matching, customizable themes, and drag-and-drop window controls.
+- **Shuffle & Loop**: Randomize queue tracks or loop your favorite song.
+- **Ghost Mode (`Ctrl+Shift+L`)**: Click right through the window while gaming or working.
+- **Low Resource Usage**: Uses under 50 MB of RAM.
 
 ---
 
 ## How It Works
 
-1. **Concurrent Audio Pipeline**: When you search or play a track, the player queries audio stream sources, album artwork, and lyric databases simultaneously in parallel worker threads.
-2. **Lyric Synchronization Engine**: Synced lyrics (`.lrc` timestamps) are scraped, normalized, and mapped to playback position with sub-second interpolation.
-3. **Atomic State Synchronization**: Metadata, dominant album cover colors, BPM estimation, and audio streams are synchronized atomically through thread-safe locks, preventing visual or acoustic stutter.
-4. **Persistent Multi-Tier Disk Cache**: Stream URLs, cover thumbnails, and parsed lyrics are saved in local JSON cache structures, allowing instant replay without network round-trips.
-5. **Hardware-Accelerated Webview GUI**: Powered by Python `pywebview` utilizing the native Edge WebView2 engine for zero-overhead rendering without Chromium bloat.
+EZ Lyrics Player retrieves audio streams and synced lyric timestamps concurrently, aligning lines in real time using local audio tracking. Playlists and track data store in a compact `playlists.json` file for instant reloads.
 
 ---
 
-## Frequently Asked Questions (FAQ)
+## FAQ
 
-### Does EZ Lyrics Player require Spotify to be installed or open?
-No. EZ Lyrics Player operates 100% standalone. You can run it with Spotify desktop completely closed.
+**Does this require Spotify?**  
+No. It operates completely standalone with zero Spotify background processes.
 
-### How much RAM and CPU does EZ Lyrics Player use?
-EZ Lyrics Player uses approximately 40 to 50 MB of RAM and negligible CPU (under 0.5% during active playback). In contrast, standard desktop clients consume 400 to 800 MB of RAM.
+**How do I play playlists?**  
+Click the play button on any playlist to start from the beginning, or click anywhere else on the row to view and pick specific tracks.
 
-### How does the skip recommendation feature work?
-When you play a song from search, skipping queries artist radio feeds (via Deezer and iTunes catalog search), queuing top-ranked tracks from the artist and closely related artists automatically.
-
-### How accurate is lyric synchronization?
-Lyrics sync to the millisecond using timestamped LRC lines. The player updates line positioning smoothly with hardware-accelerated CSS transitions.
-
-### How do I use the playlist controls?
-Clicking the Play button badge on a playlist row plays the playlist from the start. Clicking anywhere else on the row opens the playlist to view the full track list.
+**Can I run it without installing Python?**  
+Yes. Download the pre-built `EZ.Lyrics.Player.exe` directly from the [Releases](https://github.com/IsthatNyte/ez-lyrics-player/releases) page.
 
 ---
 
-## Installation & Running from Source
+## Quick Start
 
-### Prerequisites
-- Windows 10 or 11
-- Python 3.10+ (if running from source)
+### Option A: Run Pre-Built Executable
+Download `EZ.Lyrics.Player.exe` from [Releases](https://github.com/IsthatNyte/ez-lyrics-player/releases) and double-click to launch.
 
-### Run from Source
+### Option B: Run from Source
 ```bash
 git clone https://github.com/IsthatNyte/ez-lyrics-player.git
 cd ez-lyrics-player
 pip install -r requirements.txt
 python app.py
 ```
-
-### Pre-Built Executable
-You can download the standalone `EZ Lyrics Player.exe` directly from the Releases tab and run it without installing Python or dependencies.
