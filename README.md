@@ -1,6 +1,8 @@
-# EZ Lyrics Player
-
-> A lightweight, fast lyrics player based on Python.
+<div align="center">
+  <img src="assets/logo.png" alt="EZ Lyrics Logo" width="160" />
+  <h1>EZ Lyrics Player</h1>
+  <p><strong>A lightweight, fast lyrics player based on Python.</strong></p>
+</div>
 
 EZ Lyrics Player is a fast, standalone desktop music player and real-time synchronized lyrics display. It streams songs and time-synced lyrics with minimal CPU and RAM usage, running completely independent of Spotify.
 
