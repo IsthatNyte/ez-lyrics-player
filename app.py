@@ -77,6 +77,10 @@ import ctypes
 from ctypes import cast, POINTER, wintypes
 
 import requests
+http_session = requests.Session()
+_http_adapter = requests.adapters.HTTPAdapter(pool_connections=16, pool_maxsize=32, max_retries=1)
+http_session.mount("https://", _http_adapter)
+http_session.mount("http://", _http_adapter)
 
 from PIL import Image
 
@@ -1373,7 +1377,7 @@ def resolve_exact_spotify_track(artist, title):
 
             try:
 
-                r = requests.get(f"https://open.spotify.com/embed/track/{tid}", headers=headers, timeout=3.0)
+                r = http_session.get(f"https://open.spotify.com/embed/track/{tid}", headers=headers, timeout=3.0)
 
                 if r.status_code == 200:
 
@@ -1449,7 +1453,7 @@ def fetch_cover_and_artist(artist, title, album=""):
 
         q = urllib.parse.quote(q_str)
 
-        r = requests.get(f"https://itunes.apple.com/search?term={q}&entity=song&limit=4", headers=headers, timeout=2.0)
+        r = http_session.get(f"https://itunes.apple.com/search?term={q}&entity=song&limit=4", headers=headers, timeout=2.0)
 
         if r.status_code == 200:
 
@@ -1521,7 +1525,7 @@ def fetch_cover_and_artist(artist, title, album=""):
 
             q = urllib.parse.quote(f"{clean_artist} {clean_title}".strip())
 
-            r = requests.get(f"https://api.deezer.com/search?q={q}", headers=headers, timeout=2.0)
+            r = http_session.get(f"https://api.deezer.com/search?q={q}", headers=headers, timeout=2.0)
 
             if r.status_code == 200:
 
@@ -1553,7 +1557,7 @@ def fetch_cover_and_artist(artist, title, album=""):
 
         try:
 
-            img_resp = requests.get(best_cover_url, headers=headers, timeout=2.5)
+            img_resp = http_session.get(best_cover_url, headers=headers, timeout=2.5)
 
             if img_resp.status_code == 200 and len(img_resp.content) > 1000:
 
@@ -2021,7 +2025,7 @@ def fetch_spicy_api_v1(artist, title, dur_sec):
 
             params["duration"] = round(float(dur_sec), 2)
 
-        r = requests.get("https://api.spicylyrics.org/v1/tracks/search", params=params, headers=headers, timeout=4.0)
+        r = http_session.get("https://api.spicylyrics.org/v1/tracks/search", params=params, headers=headers, timeout=4.0)
 
         if r.status_code == 200:
 
@@ -2033,7 +2037,7 @@ def fetch_spicy_api_v1(artist, title, dur_sec):
 
                 if track_id:
 
-                    r2 = requests.get(f"https://api.spicylyrics.org/v1/lyrics/{track_id}", headers=headers, timeout=4.5)
+                    r2 = http_session.get(f"https://api.spicylyrics.org/v1/lyrics/{track_id}", headers=headers, timeout=4.5)
 
                     if r2.status_code == 200:
 
@@ -2089,7 +2093,7 @@ def fetch_boidu_ttml(artist, title, dur_sec=0, album=""):
 
             try:
 
-                r = requests.get(url, params=params, timeout=3.8)
+                r = http_session.get(url, params=params, timeout=3.8)
 
                 if r.status_code == 200:
 
@@ -2125,7 +2129,7 @@ def fetch_kugou_krc(artist, title, dur_sec):
 
         kw = f"{clean_t} {clean_a}".strip()
 
-        r = requests.get(
+        r = http_session.get(
 
             "http://mobilecdn.kugou.com/api/v3/search/song",
 
@@ -2165,7 +2169,7 @@ def fetch_kugou_krc(artist, title, dur_sec):
 
 
 
-        r2 = requests.get(
+        r2 = http_session.get(
 
             "http://krcs.kugou.com/search",
 
@@ -2185,7 +2189,7 @@ def fetch_kugou_krc(artist, title, dur_sec):
 
         ckey = cands[0].get("accesskey")
 
-        r3 = requests.get(
+        r3 = http_session.get(
 
             "http://lyrics.kugou.com/download",
 
@@ -2335,7 +2339,7 @@ def fetch_netease_lyrics(artist, title, dur_sec=0):
 
         kw = f"{clean_t} {clean_a}".strip()
 
-        r = requests.post(
+        r = http_session.post(
 
             "https://music.163.com/api/search/get",
 
@@ -2369,7 +2373,7 @@ def fetch_netease_lyrics(artist, title, dur_sec=0):
 
                     continue
 
-                r2 = requests.get(
+                r2 = http_session.get(
 
                     f"https://interface3.music.163.com/api/song/lyric/v1?id={sid}&cp=false&tv=0&lv=1&rv=0&kv=1&yv=1&ytv=0&yrv=0",
 
@@ -2521,7 +2525,7 @@ def translate_and_romanize_lyrics(lines, target_lang="en"):
 
             return lines
 
-        r = requests.get(
+        r = http_session.get(
 
             "https://translate.googleapis.com/translate_a/single",
 
@@ -2595,7 +2599,7 @@ def translate_and_romanize_lyrics(lines, target_lang="en"):
 
                 try:
 
-                    r_es = requests.get(
+                    r_es = http_session.get(
 
                         "https://translate.googleapis.com/translate_a/single",
 
@@ -2813,7 +2817,7 @@ def fetch_synced_lyrics(artist, title, dur_sec=0, album=""):
 
             headers = {"User-Agent": "EZLyrics/3.0"}
 
-            r = requests.get(url, params=params, headers=headers, timeout=2.2)
+            r = http_session.get(url, params=params, headers=headers, timeout=2.2)
 
             if r.status_code == 200:
 
@@ -2843,7 +2847,7 @@ def fetch_synced_lyrics(artist, title, dur_sec=0, album=""):
 
             headers = {"User-Agent": "EZLyrics/3.0"}
 
-            r = requests.get(url, params={"q": f"{clean_title} {clean_artist}".strip()}, headers=headers, timeout=2.2)
+            r = http_session.get(url, params={"q": f"{clean_title} {clean_artist}".strip()}, headers=headers, timeout=2.2)
 
             if r.status_code == 200:
 
@@ -3259,7 +3263,7 @@ def audio_meter_thread():
 
                     pass
 
-                time.sleep(0.032)
+                time.sleep(0.028)
 
     except Exception:
 
@@ -3286,88 +3290,48 @@ _recent_lock = threading.Lock()
 
 
 def discover_user_playlists():
-
     global _cached_playlists
-
     pls = []
-
     seen = set()
-
-    wit_u_path = os.path.join(resource_path(''), 'wit_u_playlist.json')
-
-    if os.path.exists(wit_u_path):
-
-        try:
-
-            with open(wit_u_path, 'r', encoding='utf-8') as f:
-
-                pdata = json.load(f)
-
-                pid = pdata.get('uri', '').split(':')[-1] or '0ym4cxrVzl0ZUmcteCcLut'
-
-                if pid not in seen:
-
-                    seen.add(pid)
-
-                    pls.append({
-
-                        'id': pid,
-
-                        'name': pdata.get('name', 'wit u'),
-
-                        'uri': pdata.get('uri', 'spotify:playlist:0ym4cxrVzl0ZUmcteCcLut'),
-
-                        'added_tracks': pdata.get('tracks', [])
-
-                    })
-
-        except Exception:
-
-            pass
-
-
-
+    for p_candidate in [
+        os.path.join(resource_path(''), 'playlists.json'),
+        os.path.join(os.path.expanduser('~'), '.ez_lyrics_playlists.json')
+    ]:
+        if os.path.exists(p_candidate):
+            try:
+                with open(p_candidate, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        for p in data:
+                            pid = p.get('id') or p.get('uri', '').split(':')[-1]
+                            if pid and pid not in seen:
+                                seen.add(pid)
+                                pls.append({
+                                    'id': pid,
+                                    'name': p.get('name', 'Playlist'),
+                                    'uri': p.get('uri', f'spotify:playlist:{pid}'),
+                                    'added_tracks': p.get('tracks', [])
+                                })
+            except Exception:
+                pass
     try:
-
         cfg = load_user_config()
-
         cached_names = cfg.get('cached_playlist_names', {})
-
         saved_tracks = cfg.get('saved_playlist_tracks', {})
-
-        user_playlist_ids = ['0ym4cxrVzl0ZUmcteCcLut', '5PpGslcyTnLZ1aPEHB0lHN']
-
-        for pid in user_playlist_ids:
-
+        for pid, tracks in saved_tracks.items():
             if pid not in seen:
-
                 seen.add(pid)
-
-                pname = cached_names.get(pid, 'My Playlist #3' if pid == '5PpGslcyTnLZ1aPEHB0lHN' else 'wit u')
-
+                pname = cached_names.get(pid, 'My Playlist')
                 pls.append({
-
                     'id': pid,
-
                     'name': pname,
-
                     'uri': f'spotify:playlist:{pid}',
-
-                    'added_tracks': saved_tracks.get(pid, [])
-
+                    'added_tracks': tracks
                 })
-
     except Exception:
-
         pass
-
-
-
     _cached_playlists = pls
-
     return pls
-
-
 
 class WebBridge:
 
@@ -3773,7 +3737,7 @@ class WebBridge:
 
                 params = {"term": itunes_term, "entity": "song", "limit": 20}
 
-                r = requests.get(url, params=params, timeout=3.0)
+                r = http_session.get(url, params=params, timeout=3.0)
 
                 if r.status_code == 200:
 
@@ -3847,7 +3811,7 @@ class WebBridge:
 
             url_a = f"https://api.deezer.com/search/artist?q={q_art}"
 
-            r_a = requests.get(url_a, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5)
+            r_a = http_session.get(url_a, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5)
 
             if r_a.status_code == 200:
 
@@ -3861,7 +3825,7 @@ class WebBridge:
 
                         url_r = f"https://api.deezer.com/artist/{aid}/radio"
 
-                        r_r = requests.get(url_r, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5)
+                        r_r = http_session.get(url_r, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5)
 
                         if r_r.status_code == 200:
 
@@ -3917,7 +3881,7 @@ class WebBridge:
 
                 url_i = f"https://itunes.apple.com/search?term={q_term}&entity=song&limit=25"
 
-                r_i = requests.get(url_i, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5)
+                r_i = http_session.get(url_i, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5)
 
                 if r_i.status_code == 200:
 
